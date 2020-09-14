@@ -1,0 +1,125 @@
+$ find /etc/ -name “rc” -type d
+O que fez o comando acima?
+
+Este exemplo procura no diretório /etc todos os diretórios cujos nomes começam com a
+expressão rc.
+-------------------------------------------------------------------------------------------------
+6. $ cat sl.txt liberdades.txt
+7. $ tac sl.txt
+8. $ tac sl.txt liberdades.txt
+Você compreende o significado das saídas exibidas pelos comandos 6, 7 e 8? Qual a diferença
+entre esses comandos?
+
+Comando 6 é a concatenação dos textos contidos nos arquivos sl.txt e liberdades.txt.
+Comando 7 é a versão oposta do comando 'cat', ou seja, será impresso o conteúdo do arquivo sl.txt de forma invertida (começando da última linha e terminando na primeira).
+Comando 8 é a concatenação dos textos contidos nos arquivos sl.txt e liberdades.txt, porém, será impresso o conteúdo dos arquivos sl.txt e liberdades.txt de forma invertida (começando da última linha e terminando na primeira, de cada arquivo).
+-------------------------------------------------------------------------------------------------
+
+$date > datas
+$cat datas
+$echo FIM DO ARQUIVO >> datas
+$ cat datas
+Qual a diferença dos comandos executados com > e >> ?Qual a diferença entre esses
+comandos que usam > e >>?
+
+Nesta situação, é coletado a data do sistema que é gravada no arquivo datas.
+Depois, o cat imprime o que foi salvo no arquivo datas.
+Agora, a frase "FIM DO ARQUIVO" é gravada após a última linha do texto existente no arquivo datas
+-------------------------------------------------------------------------------------------------
+
+4. $ diff a.txt b.txt
+5. $ diff -u a.txt b.txt
+Você compreende o significado das saídas exibidas pelos comandos 4 e 5? Como fazer para
+jogar a saída do comando 5 para um arquivo chamado saída.txt? Acrescente a palavra terra no arquivo
+a.txt e execute os comandos 4 e 5 novamente, observando as saídas geradas.
+
+Saida do comando 4:     3c3
+            < vida
+            ---
+            > vidro
+Esse comando indica que a linha 3 do arquivo a.txt é diferente da linha 3 do arquivo b.txt
+
+O comando 5, apresenta de forma mais detalhada, as linhas diferentes, sugerindo a/as linha/as acréscimo e decréscimo, que deixariam os arquivos idênticos.
+-------------------------------------------------------------------------------------------------
+
+2. $ grep bash /etc/shells
+3. $ grep -v bash /etc/shells
+Observe que o comando exibe na tela apenas as linhas do arquivo shells que contém a palavra
+bash. Qual a diferença da saída do comando 2 para o comando 3?
+
+O comando 2 apresenta todas as linhas aparecem o conjunto de caracteres 'bash', já o comando 3 apresenta todas as linhas que não possuem o conjunto de caracteres 'bash'.
+-------------------------------------------------------------------------------------------------
+
+$ ls /etc | grep init
+O que fez o comando acima?
+
+Filtra da saída apresenta pelo comando ls /etc, e exibe tudo que contem a expressão “init”.
+
+$ ls /etc | grep conf
+$ ls /etc | grep conf$
+O que fez o comando acima? Em sua opinião, o que significa a inclusão do caractere $ ? Qual
+a diferença entre os dois comandos? E se escutássemos o último comando dessa forma (faz
+diferença?): $ ls /etc | grep ^con
+O primeiro comando filtra a saída apresenta pelo comando ls /etc, e exibe tudo que contém a expressão “conf”. Já o último, filtra a saída apresenta pelo comando ls /etc, e exibe tudo que termina com a expressão “conf”.
+O comando "ls /etc | grep ^con", filtra a saída apresenta pelo comando ls /etc, e exibe tudo que começa com a expressão “con”.
+-------------------------------------------------------------------------------------------------
+
+1. $ ls /etc | grep network
+2. $ ls /etc | grep -i network
+Qual a diferença entre as saídas apresentadas nos comandos 1 e 2?
+
+O primeiro comando filtra a saída apresenta pelo comando ls /etc, e exibe tudo que contém a expressão “network” e o segundo comando, realiza o mesmo procedimento, sem distinção entre letras maiúsculas e minúsculas.
+-------------------------------------------------------------------------------------------------
+
+$ cat agenda.txt | cut -c-5
+$ cat agenda.txt | cut -f1 -d" "
+$ cat agenda.txt | cut -f2 -d" "
+$ cat /etc/passwd
+$ cat /etc/passwd | cut -f1 -d:
+$ cat /etc/passwd | cut -f1 -d/
+De acordo com os comandos executados, qual o significado dos parâmetros -d e -f ?
+
+O parâmetro d define o caractere que delimitam o corte. O parâmetro f, emite qualquer linha que não contenha o caractere delimitador (parâmetro d).
+-------------------------------------------------------------------------------------------------
+
+$ uniq lista
+Qual resultado apresentado?
+A lista exatamente como foi criada e salva.
+
+$ sort lista | uniq
+O comando agora deu certo?
+Agora o comando funcionou como esperado já que a lista foi ordenada.
+
+$ sort lista | uniq -d
+Qual o significado o parâmetro -d?
+Indica o elemento duplicado da lista.
+-------------------------------------------------------------------------------------------------
+
+$ wc sl.txt
+$ wc -l sl.txt
+$ wc -w sl.txt
+$ wc -c sl.txt
+Qual a diferença entre os comandos acima?
+Explique a diferença entre os comandos executados anteriormente.
+
+O primeiro apresenta o número de linhas, caracteres e palavras.
+O segundo apenas o número de linhas.
+O terceiro apenas o número de palavras.
+O quarto apenas o número de caracteres.
+-------------------------------------------------------------------------------------------------
+
+$ cat cidades.txt | tr "[a-z]" "[A-Z]"
+$ cat cidades.txt | tr "[a,b]" "[A,B]"
+Qual o resultado? Explique o que aconteceu.
+
+comando 1:     CAMPINA GRANDE
+        PATOS
+        RECIFE
+        QUEIMADAS
+Podemos perceber que o comando tr, converteu todos os caracteres em maiúsculo.
+
+comando 2:    cAmpinA grAnde
+        pAtos
+        recife
+        queimAdAs
+Podemos perceber que o comando tr, converteu apenas os caracteres 'a' e 'b' em maiúsculo.
