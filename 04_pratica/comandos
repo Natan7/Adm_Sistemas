@@ -1,0 +1,127 @@
+adduser jose
+
+useradd joao
+
+cat /etc/passwd | grep joao >> saidas_pratica_04
+getent passwd joao >> saidas_pratica_04
+
+cat /etc/group | grep joao >> saidas_pratica_04
+cat /etc/shadow | grep joao >> saidas_pratica_04
+ls /home >> saidas_pratica_04
+
+cat /etc/passwd >> saidas_pratica_04
+
+cat /etc/group >> saidas_pratica_04
+
+useradd -m jose
+getent passwd jose >> saidas_pratica_04
+ls /home >> saidas_pratica_04
+
+useradd -m -s /bin/bash joaquim
+getent passwd joaquim >> saidas_pratica_04
+ls /home >> saidas_pratica_04
+
+groupadd alunos
+groupadd professores
+groupadd tecnicos
+useradd -m -s /bin/bash -g alunos maria
+getent passwd maria >> saidas_pratica_04
+ls /home >> saidas_pratica_04
+groups maria >> saidas_pratica_04
+
+useradd -m -s /bin/bash -g alunos -G professores ana
+getent passwd ana >> saidas_pratica_04
+ls /home >> saidas_pratica_04
+groups ana >> saidas_pratica_04
+
+useradd -m -s /bin/bash -g alunos -G professores,tecnicos luiz
+getent passwd luiz >> saidas_pratica_04
+ls /home >> saidas_pratica_04
+groups luiz >> saidas_pratica_04
+
+usermod joao -l joao.silva
+getent passwd joao.silva >> saidas_pratica_04
+groups joao.silva >> saidas_pratica_04
+
+usermod -g root jose
+groups jose >> saidas_pratica_04
+
+usermod -G tecnicos jose
+groups jose >> saidas_pratica_04
+tail /etc/group >> saidas_pratica_04
+
+usermod -G alunos,professores jose
+groups jose >> saidas_pratica_04
+
+usermod -G tecnicos jose
+groups jose >> saidas_pratica_04
+
+usermod -a -G alunos,professores jose
+groups jose >> saidas_pratica_04
+
+passwd jose
+passwd jose -x 30 >> saidas_pratica_04
+passwd jose -S >> saidas_pratica_04
+
+passwd jose -x 14 -w 3 >> saidas_pratica_04
+passwd jose -S >> saidas_pratica_04
+
+userdel joao.silva
+
+userdel -r ana
+cat /etc/passwd | grep ana >> saidas_pratica_04
+cat /etc/group | grep ana >> saidas_pratica_04
+cat /etc/shadow | grep ana >> saidas_pratica_04
+ls /home >> saidas_pratica_04
+
+id jose >> saidas_pratica_04
+
+groupadd terceiros
+groupdel terceiros
+groupmod professores -n docentes
+
+gpasswd -a maria tecnicos
+groups maria >> saidas_pratica_04
+
+gpasswd -d maria alunos
+groups maria >> saidas_pratica_04
+
+passwd -l jose >> saidas_pratica_04
+passwd -u jose >> saidas_pratica_04
+
+
+cut -f1 -d: /etc/passwd >> saidas_pratica_04
+cut -f1 -d: /etc/passwd | less
+cut -f1 -d: /etc/passwd | sort >> saidas_pratica_04
+cut -f1 -d: /etc/passwd | sort | nl >> saidas_pratica_04
+
+cut -f1 -d: /etc/group sort >> saidas_pratica_04
+cut -f1 -d: /etc/group | sort >> saidas_pratica_04
+cut -f1 -d: /etc/group | sort | nl >> saidas_pratica_04
+
+apt install quota quotatool
+
+nano /etc/fstab
+"defaults,usrjquota=aquota.user,grpjquota=aquota.group,jqfmt=vfsv0 0       1"
+mount -o remount /
+
+quotacheck -mcug /
+
+ls -lah / >> saidas_pratica_04
+
+quotaon -v /
+quotaoff -v /home
+
+adduser usquota1
+adduser usquota2
+
+edquota -u usquota1
+"""
+soft hard
+5000 6000
+"""
+setquota -u usquota2 0 0 100 150 -a /
+
+repquota -va >> saidas_pratica_04
+
+edquota -t
