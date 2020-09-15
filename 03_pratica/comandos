@@ -1,0 +1,42 @@
+mkdir -p /documentos/Documentos
+
+touch /documentos/buginganga.txt
+touch /documentos/organograma.odc
+touch /documentos/Documentos/credores.xls
+touch /documentos/Documentos/contas_pagar.odc
+
+cd /documentos
+
+ls -l >> saidas_pratica_03
+chmod g+w buginganga.txt
+ls -l >> saidas_pratica_03
+chmod g-w buginganga.txt
+ls -l >> saidas_pratica_03
+
+chmod -R o+w Documentos
+ls -l Documentos/ >> saidas_pratica_03
+
+chmod 600 organograma.odc
+ls -l >> saidas_pratica_03
+
+
+groupadd administração
+groupadd contabilidade
+ls -l >> saidas_pratica_03
+
+chgrp -v contabilidade buginganga.txt
+chgrp administração buginganga.txt
+ls -l >> saidas_pratica_03
+
+chgrp administração Documentos/
+ls -l >> saidas_pratica_03
+
+useradd aluno1
+useradd aluno2
+ls -l >> saidas_pratica_03
+
+chown aluno1 organograma.odc
+ls -l >> saidas_pratica_03
+
+chown aluno2:contabilidade organograma.odc
+ls -l >> saidas_pratica_03
