@@ -1,0 +1,68 @@
+mkswap /dev/sdb2 >> saidas_pratica_05
+
+mkfs -t ext3 /dev/sdb1 >> saidas_pratica_05
+mkfs.ext3 /dev/sdb3 >> saidas_pratica_05
+mkfs –t ext4 /dev/sdb5 >> saidas_pratica_05
+mkfs.ext4 /dev/sdb6 >> saidas_pratica_05
+
+df -h / >> saidas_pratica_05
+
+du -sh /var/* >> saidas_pratica_05
+du -h --max-depth=1 /var >> saidas_pratica_05
+
+dumpe2fs -h /dev/sdb1 | grep "Block count\|Block size" >> saidas_pratica_05
+dumpe2fs -h /dev/sdb3 | grep "created" >> saidas_pratica_05
+dumpe2fs -h /dev/sdb5 | grep "UUID" ### ERROR -> "Bad magic number in super-block tentando abrir /dev/sdb5"
+
+tune2fs -L "Particao 1" /dev/sdb1
+tune2fs -i 7d /dev/sdb3
+tune2fs -m1 /dev/sdb6
+tune2fs -l /dev/sdb1 | grep "volume name" >> saidas_pratica_05
+tune2fs -l /dev/sdb3 | grep "[Cc]heck" >> saidas_pratica_05
+tune2fs -l /dev/sdb6 | grep "Reserved" >> saidas_pratica_05
+
+fsck /dev/sdb1 >> saidas_pratica_05
+fsck.ext3 /dev/sdb3 
+fsck /dev/sdb5 >> saidas_pratica_05
+fsck.ext4 /dev/sdb6
+
+mkdir /mnt/dir_teste
+mount /dev/sdb3 /mnt/dir_teste
+df -h >> saidas_pratica_05
+
+umount /dev/sdb3
+df -h >> saidas_pratica_05
+
+nano /etc/fstab 
+"""
+/dev/sdb2 none	swap sw	0 0
+/dev/sdb3 /dir_teste auto defaults 0 2
+"""
+
+mount –a
+mount
+df -h >> saidas_pratica_05
+
+mkdir /mnt/temp_var
+mount /dev/sdb1 /mnt/temp_var
+mv /var/* /mnt/temp_var/
+
+nano /etc/fstab 
+"""
+/dev/sdb1 /var auto defaults 0 1
+"""
+
+mount -a
+umount /mnt/temp_var
+df -h >> saidas_pratica_05
+
+cat /proc/swaps >> saidas_pratica_05
+
+swapon --all
+cat /proc/swaps >> saidas_pratica_05
+
+swapoff /dev/sdb2
+cat /proc/swaps >> saidas_pratica_05
+
+swapon /dev/sdb2
+cat /proc/swaps >> saidas_pratica_05
