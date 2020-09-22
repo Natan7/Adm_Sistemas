@@ -43,3 +43,26 @@ mount –a
 mount
 df -h >> saidas_pratica_05
 
+mkdir /mnt/temp_var
+mount /dev/sdb1 /mnt/temp_var
+mv /var/* /mnt/temp_var/
+
+nano /etc/fstab 
+"""
+/dev/sdb1 /var auto defaults 0 1
+"""
+
+mount -a
+umount /mnt/temp_var
+df -h >> saidas_pratica_05
+
+cat /proc/swaps >> saidas_pratica_05
+
+swapon --all
+cat /proc/swaps >> saidas_pratica_05
+
+swapoff /dev/sdb2
+cat /proc/swaps >> saidas_pratica_05
+
+swapon /dev/sdb2
+cat /proc/swaps >> saidas_pratica_05
