@@ -1,0 +1,12 @@
+bash script_1.sh >> saidas_pratica_07_III
+bash script_2.sh >> saidas_pratica_07_III
+bash script_3.sh >> saidas_pratica_07_III
+bash script_4.sh >> saidas_pratica_07_III
+
+touch input_5
+echo "Input_Teste" >> input_5
+cat input_5 | bash script_5.sh >> saidas_pratica_07_III
+
+
+
+
