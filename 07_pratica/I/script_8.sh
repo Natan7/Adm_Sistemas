@@ -1,7 +1,6 @@
 #!/bin/bash
 
 echo "Script 8"
-echo $2
 if [ -f $1 ]; then
 	echo "Arquivo encontrado"
 else

@@ -1,0 +1,17 @@
+bash script_1.sh >> saidas_pratica_07_I
+touch arquivo
+echo "123" >> arquivo
+bash script_2.sh >> saidas_pratica_07_I
+bash script_3.sh >> saidas_pratica_07_I
+bash script_4.sh >> saidas_pratica_07_I
+bash script_5.sh >> saidas_pratica_07_I
+bash script_6.sh >> saidas_pratica_07_I
+bash script_7.sh script_1.sh >> saidas_pratica_07_I
+bash script_8.sh script_1.sh >> saidas_pratica_07_I
+
+touch input_9
+echo "Joao" >> input_9
+cat input_9 | bash script_9.sh >> saidas_pratica_07_I
+
+bash script_10.sh >> saidas_pratica_07_I
+bash script_11.sh >> saidas_pratica_07_I
