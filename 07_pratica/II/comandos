@@ -1,0 +1,18 @@
+touch input_1
+echo "Teste numero 1" >> input_1
+echo "Teste 2" >> input_1
+cat input_1 | (bash script_1.sh && bash script_1.sh) >> saidas_pratica_07_II
+
+touch input_2
+echo -e "Caracteres1\nPalavra2" >> input_2
+cat input_2 | (bash script_2.sh && bash script_2.sh) >> saidas_pratica_07_II
+
+touch input_3
+echo -e "aaaaaaaaaaaaa\nbbbbbbbbbbbbbbb\nxxxxxxxxxxxxxxx\nyyyyyyyyyyyyyyy\nasdasd\nxsdsd" >> input_3
+cat input_3 | (bash script_3.sh && bash script_3.sh && bash script_3.sh && bash script_3.sh && bash script_3.sh && bash script_3.sh) >> saidas_pratica_07_II
+
+touch input_4
+echo "Começo da frase e fim" >> input_4
+cat input_4 | bash script_4.sh >> saidas_pratica_07_II
+
+
