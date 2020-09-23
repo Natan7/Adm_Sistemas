@@ -1,0 +1,13 @@
+Script 1 - Imprimir cada palavra da frase, com intervalo de 1 segundo entre impressões
+Script 2 - Imprimir cada palavra contida no arquivo de nome 'arquivo', com intervalo de 1 segundo entre impressões
+Script 3 - Imprime o nome de todos os arquivos e pastas contidos na pasta em que o script se encontra, com intervalo de 1 segundo entre impressões
+Script 4 - Imprime uma sequência numérica que vai de 1 a 100, com intervalo de 1 segundo entre impressões
+Script 5 - Imprime uma sequência numérica que vai de 1 a 9, na mesma linha (-n)
+Script 6 - Realiza a comparação entre a variável 'inicio' e a constante 'fim', imprime uma mensagem sempre que a variável 'inicio' for menor que a variavel 'fim' e quando ambas forem iguais (neste caso, 10). Condição de parada é justamente esta igualdade
+Script 7 - Recebe como entrada, uma arquivo via argumento do script ('$1') e imprime todas as linha do arquivo, indicando numericamente a linha cada linha
+Script 8 - Verifica se existe uma arquivo e diretório chamado '$1' (representa o argumento passado na entrada)
+Script 9 - Recebe na entrada um nome passado pelo usuário e tem como resultado e imprime uma saudação (caso a palavra informada seja Jose ou Joao) ou a mensagem "Nao te conheco."
+Script 10 - Imprime uma saudação de acordo com o horário atual da máquina que executa o script ("Boa tarde" ou "Boa tarde")
+Script 11 - Realiza algo análogo ao Script_10, porém, há uma condição para caso seja manhã
+Script 12 - Pergunta se usuário deseja limpar a tela, de modo que o script realiza limpeza, caso o usuário iforme 'S' ou 's', e não realiza limpeza caso qualquer outra coisa seja informada
+Script 13 - Caso não exista um diretório chamado 'casa', é criado juntamente com 3 arquivos (casa1, casa2, casa3). Em seguida um 'for' realiza a coleta do nome de todos os arquivos contidos na pasta 'casa', as  letras são todas convertidas para maiúsculas, e os arquivos são renomeados com seus respectivos nomes, agora, com letras maiúsculas.
