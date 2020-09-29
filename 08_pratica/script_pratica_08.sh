@@ -12,11 +12,8 @@ command=""
 
 if [ "$#" == 0 ] # -z -> No argument supplied
 then
-	echo "DEFAULT"
-	command="getent passwd | awk -F "":"" '{print\$1,\$3,\$5}'"
+	command="getent passwd | awk -F "":"" '{print\$1,\$3,\$5}'"	# Default mode
 	#command="awk -F "":"" '{print\$1,\$3,\$5}' /etc/passwd"
-	echo "COMMAND: $command"
-	echo "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
 	eval $command
 	exit $SUCCESS
 fi
@@ -28,7 +25,7 @@ do
 			command="getent passwd | awk -F "":"" '{print\$1,\$3,\$5}'"
 		;;
         	-human )
-			uid_max=$(cat /etc/login.defs | grep -E "^UID_MAX" | grep -o '[0-9]*')
+			uid_max=$(cat /etc/login.defs | grep -E "^UID_MAX" | grep -o '[0-9]*')		 # get UID_MAX
 			command="getent passwd {1000..$uid_max} | awk -F "":"" '{print\$1,\$3,\$5}'"
         	;;
 	        *)
@@ -38,19 +35,27 @@ do
 	esac
 	case "$2" in
 		-active )
-			echo "ACTIVE"							# depuring code
-			user_names="w | awk -F "":"" '{print\$1}'"
-			echo "COMMAND: $command"
-			echo "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" # depuring code
+			echo "ACTIVE"								# depuring code
+			user_names=$(w | passwd -S | grep P | awk '{print $1}')
+			command="${command} | grep ${user_names}"
+			echo "COMMAND: $command"						# depuring code
+			echo "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"	# depuring code
 			eval $command
 			exit $SUCCESS
 		;;
 		-nonactive )
+			echo "NON-ACTIVE"							# depuring code
+			user_names=$(w | passwd -S | grep LK | awk '{print $1}')
+			command="${command} | grep ${user_names}"
+			echo "COMMAND: $command"						# depuring code
+			echo "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"	# depuring code
+			eval $command
+			exit $SUCCESS
 		;;
 		-order )
 			echo "ORDER" 								# depuring code
 			command="${command} | sort"
-			echo "COMMAND: $command"
+			echo "COMMAND: $command"						# depuring code
 			echo "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"	# depuring code
 			eval $command
 			exit $SUCCESS
@@ -59,7 +64,21 @@ do
 			echo "Error, try -active or -nonactive"
 			exit $ERROR
 	        ;;
-    	esac 
+    	esac
+	case "$3" in
+		-order )
+			echo "ORDER" 								# depuring code
+			command="${command} | sort"
+			echo "COMMAND: $command"						# depuring code
+			echo "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"	# depuring code
+			eval $command
+			exit $SUCCESS
+		;;
+	        *)
+			echo "Error, try -active or -nonactive"
+			exit $ERROR
+	        ;;
+    	esac
 done;
 
 #echo "COMMAND FINAL: $command"						# depuring code
