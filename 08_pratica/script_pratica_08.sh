@@ -9,60 +9,45 @@ COMMENT1
 SUCCESS=0        
 ERROR=1  
 
-if [ $# -gt "7" ]; then
-	echo "Error. A lot arguments ($#)"
-	exit $ERROR
-fi
-
-option=$1	# if -all or -human
-situation=$2	# if -active or -nonactive
-order=$3
-group=$4
-dir=$5
-out=$6
-file_name=$7
-command=""
-
-echo "Listagem dos usuários do sistema"
-
-if [ -z "$option" ] || [ $option == "-all" ]	# -z -> No argument supplied
+if [ "$#" == 0 ] # -z -> No argument supplied
 then
-	echo "ALL or default"
-	command="awk -F "":"" '{print\$1,\$3,\$5}' | getent passwd"
+	echo "DEFAULT"
+	command="getent passwd | awk -F "":"" '{print\$1,\$3,\$5}'"
 	#command="awk -F "":"" '{print\$1,\$3,\$5}' /etc/passwd"
-elif [ $option == "-human" ]
-then
-	echo "HUMAN"
-	uid_max=$(cat /etc/login.defs | grep -E "^UID_MAX" | grep -o '[0-9]*')
-	command="awk -F "":"" '{print\$1,\$3,\$5}' /etc/passwd | getent passwd {1000..$uid_max}"
-	#command="getent passwd {1000..6000} | awk -F "":"" {print\$1,\$3,\$5}"
-elif [ -n $option ]
-then
-	echo "Erro, try [-all or -human]"
-	exit $ERROR
-fi
-
-
-if [ -z "$situation" ]
-then
 	echo "COMMAND: $command"
-#	$command
-	eval "$command"
+	echo "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
+	eval $command
 	exit $SUCCESS
-elif [ $situation == "-active" ]
-then
-	echo "active"
-	exit $SUCCESS
-elif [ $situation == "-nonactive" ]
-then
-	echo "nonactive"
-	exit $SUCCESS
-elif [ -n $situation ]
-then
-	echo "Erro, try [-active or -active]"
-	exit $ERROR
 fi
 
-echo "COMMAND: $command"
+for argument in "$@"  # $@ all arguments passed in
+do
+	case "$1" in
+		-all )
+			echo "ALL"
+			command="getent passwd | awk -F "":"" '{print\$1,\$3,\$5}'"
+			echo "COMMAND: $command"
+			echo "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
+			eval $command
+			exit $SUCCESS
+		;;
+        	-human )
+			echo "HUMAN"
+			uid_max=$(cat /etc/login.defs | grep -E "^UID_MAX" | grep -o '[0-9]*')
+			command="getent passwd {1000..$uid_max} | awk -F "":"" '{print\$1,\$3,\$5}'"
+			echo "COMMAND: $command"
+			echo "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
+			eval $command
+			exit $SUCCESS
+        	;;
+	        *)
+			echo "Erro, try [-all or -human]"
+			exit $ERROR
+	        ;;
+    	esac 
+done;
+
+#echo "COMMAND: $command"
+#echo "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
 #eval $command
 exit $SUCCESS
