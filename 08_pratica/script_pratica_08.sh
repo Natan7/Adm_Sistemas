@@ -17,7 +17,6 @@ command=""
 if [ "$#" == 0 ] # -z -> No argument supplied
 then
 	command="getent passwd | awk -F "":"" '{print\$1,\$3,\$5}'"	# Default mode
-	#command="awk -F "":"" '{print\$1,\$3,\$5}' /etc/passwd"
 	eval $command
 	exit $SUCCESS
 fi
@@ -42,10 +41,10 @@ do
 	esac
 	case "$2" in
 		-active )
-			user_names=$(w | passwd -S | grep P | awk '{print $1}')
-			if [ -n "$user_names" ]
+			users_names=$(w | passwd -S | grep P | awk '{print $1}')
+			if [ -n "$users_names" ]
 			then
-				command="${command} | grep ${user_names}"
+				command="${command} | grep ${users_names}"
 			else
 				echo "Not have active users in this time."
 				exit $SUCCESS				
@@ -53,10 +52,10 @@ do
 
 		;;
 		-nonactive )
-			user_names=$(w | passwd -S | grep LK | awk '{print $1}')
-			if [ -n "$user_names" ]
+			users_names=$(w | passwd -S | grep LK | awk '{print $1}')
+			if [ -n "$users_names" ]
 			then
-				command="${command} | grep ${user_names}"
+				command="${command} | grep ${users_names}"
 			else
 				echo "Not have nonactive users in this time."
 				exit $SUCCESS				
@@ -81,6 +80,13 @@ do
 		-order )
 			command="${command} | sort"
 		;;
+		-dir )
+			get_users="${command} | awk '{print\$1}'"
+			users_names=$(eval $get_users)
+			get_dir=$(getent passwd | grep "$users_names" | awk -F ":" '{print $6}')
+			get_dir_info=$(du -sh "$get_dir")
+			command="${command} | awk '{\$4=\"${get_dir_info}\"; print}'"
+		;;
 		-out )
 			command="${command} > "
 			out=$TRUE;
@@ -100,7 +106,20 @@ do
     	esac
 	case "$4" in
 		-groups )
-			#implement
+			get_users="${command} | awk '{print\$1}'"
+			users_names=$(eval $get_users)
+			get_groups_list=$(groups $users_names | awk -F ": " '{print $2}')
+			command="${command} | awk '{\$4=\"${get_groups_list}\"; print}'"
+		;;
+		-dir )
+			get_users="${command} | awk '{print\$1}'"
+			users_names=$(eval $get_users)
+			get_dir=$(getent passwd | grep "$users_names" | awk -F ":" '{print $6}')
+			get_dir_info=$(du -sh "$get_dir")
+			command="${command} | awk '{\$4=\"${get_dir_info}\"; print}'"
+		;;
+		-order )
+			command="${command} | sort"
 		;;
 		-out )
 			command="${command} > "
@@ -121,7 +140,15 @@ do
     	esac
 	case "$5" in
 		-dir )
-			#implement
+			get_users="${command} | awk '{print\$1}'"
+			users_names=$(eval $get_users)
+			get_dir=$(getent passwd | grep "$users_names" | awk -F ":" '{print $6}')
+			get_dir_info=$(du -sh "$get_dir")
+
+			number_column=$(eval $command | awk '{ FS = ":" } ; { print NF}') 
+			number_column=$(($number_column + 1))
+
+			command="${command} | awk '{\$$number_column=\"${get_dir_info}\"; print}'"
 		;;
 		-out )
 			command="${command} > "
