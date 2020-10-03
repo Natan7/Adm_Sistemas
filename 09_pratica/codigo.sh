@@ -3,13 +3,11 @@
 SUCCESS=0        
 ERROR=1
 
-LAST_LOGGINS=$(last -s -$2days -t today | head -n -2) #retorna todos os logins desde $2 dias atrás até hoje
+LAST_LOGINS=$(last -s -$2days | head -n -2 | cut -d" " -f1) #retorna todos os logins desde $2 dias atrás até hoje
 
-if [ -n "$LAST_LOGGINS" ]
+if [ ! -n "$LAST_LOGINS" ]
 then
-	echo "OK. Users found"
-else 
-	echo "No users logged in in the determined period"
+	echo "No users logged in the determined period"
 	exit $ERROR
 fi
 
@@ -22,26 +20,60 @@ case "$1" in
 	-block )
 		for user in $USERS
 		do
-			if [[ $LAST_LOGGINS =~ .^${user}.* ]]
-			then 
-				echo "NOT BLOCKING USER ${user}"
-			else
-				echo "BLOCKING USER ${user}" # Os usuarios que não estiverem na lista do LAST_LOGGINS serão bloqueados
-				sudo passwd -lock ${user}
+			COUNTER=0
+			for login in $LAST_LOGINS
+			do	
+				if [  ${login} == ${user} ]
+				then	
+					COUNTER=$(($COUNTER+1))
+					break
+				fi
+			done
+			
+			if [ $COUNTER == 0 ]
+			then
+				echo "BLOCKING USER ${user}" 
+				sudo passwd --lock ${user}
 			fi
 		done
 	;;
 	-remove )
+		
+		if [ ! -e /backup_usuarios ]
+		then
+			sudo mkdir /backup_usuarios
+		fi
+		
+		DATE=$(date -d '' +'%b%d%Y')
+		
 		for user in $USERS
 		do
-			if [[ $LAST_LOGGINS =~ .^${user}.* ]]
-			then 
-				echo "NOT REMOVING USER ${user}"
-			else
-				echo "BACKING UP FILES FROM /home/${user}" # Os usuarios que não estiverem na lista do LAST_LOGGINS serão removidos do sistema
+			COUNTER=0
+			for login in $LAST_LOGINS
+			do	
+				if [  ${login} == ${user} ]
+				then	
+					COUNTER=$(($COUNTER+1))
+					break
+				fi
+			done
+			
+			if [ $COUNTER == 0 ]
+			then
+				echo "BACKING UP FILES FROM /home/${user}" 
+				sudo tar -czvf /backup_usuarios/${user}_$DATE.tar.gz /home/${user}/*
+				echo "DONE!"
+				echo "====="
+				echo "Deleting home folder"
+				sudo rm -Rf /home/${user}
+				echo "DONE!"
+				echo "====="
+				echo "Deleting user ${user}"
+				sudo userdel ${user}
+				echo "DONE!"
+				echo "====="
 			fi
-		done
-	
+		done	
 	;;
 	*)
 		echo "ERROR, try -block [days] or -remove [days] options"
