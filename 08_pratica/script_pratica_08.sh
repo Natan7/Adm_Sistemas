@@ -15,7 +15,7 @@ out=$FALSE
 user_argument=$FALSE
 command=""
 
-if [ "$#" == 0 ]											# No argument supplied
+if [ "$#" == 0 ]											# If no argument supplied
 then
 	command="getent passwd | awk -F "":"" '{print\$1,\$3,\$5}'"					# Default mode
 	eval $command
@@ -44,7 +44,7 @@ case "$2" in
 	-active )
 		#users_names=$(w | passwd -S | grep P | awk '{print $1}')
 		users_names=$(passwd -S -a|awk '$2 ~ /P/ {print $1}')
-		if [ -n "$users_names" ]								# -n -> Variavel is not NULL
+		if [ -n "$users_names" ]								# -n -> If variavel is not NULL
 		then
 			[ -e .temp ] && rm .temp							# clean up
 			for user in $users_names
@@ -60,7 +60,7 @@ case "$2" in
 	-nonactive )
 		#users_names=$(w | passwd -S | grep LK | awk '{print $1}')
 		users_names=$(passwd -S -a|awk '$2 ~ /L/ {print $1}')
-		if [ -n "$users_names" ]								# -n -> Variavel is not NULL
+		if [ -n "$users_names" ]								# -n -> If variavel is not NULL
 		then
 			[ -e .temp ] && rm .temp							# clean up
 			for user in $users_names
@@ -84,7 +84,7 @@ case "$2" in
 	*)
 		if [ $user_argument == $TRUE ]
 		then
-			if [ -z $2 ]									# -z -> No argument supplied
+			if [ -z $2 ]									# -z -> If no argument supplied
 			then
 				echo "Error, user name not informed"
 				exit $ERROR
@@ -92,16 +92,16 @@ case "$2" in
 	
 			user=$2
 			find_user=$(getent passwd | awk -F "":"" '{print$1}' | grep -x $user)
-			if [ -z "$find_user" ]								# -z -> Variavel is NULL
+			if [ -z "$find_user" ]								# -z -> If variavel is NULL
 			then
 				echo "User not found"
 				exit $SUCCESS
 			fi
 
-			command="getent passwd | awk -F "":"" '{print\$1,\$3}' | grep \$user" ################################### check
+			command="getent passwd | awk -F "":"" '{print\$1,\$3}' | grep \"\$user \""
 			is_active=$(passwd -S -a|awk '$2 ~ /P/ {print $1}' | grep -x $user)	
 			is_nonactive=$(passwd -S -a|awk '$2 ~ /L/ {print $1}' | grep -x $user)	
-			if [ -n "$is_active" ]
+			if [ -n "$is_active" ]								# -n -> If variavel is not NULL
 			then
 				command="${command} | awk '{\$3=\"Active_User\"; print}'"
 			elif [ -n "$is_nonactive" ]
@@ -128,6 +128,7 @@ case "$2" in
 		elif [ -n "$2" ]
 		then
 			echo "Error, try -active or -nonactive"
+			[ -e .temp ] && rm .temp
 			exit $ERROR
 		fi
         ;;
@@ -152,6 +153,7 @@ case "$3" in
 		elif [ -n "$3" ]
 		then
 			echo "Error, try -order"
+			[ -e .temp ] && rm .temp							# clean up
 			exit $ERROR
 		fi
         ;;
@@ -177,6 +179,7 @@ case "$4" in
 		[ -e .temp_aux ] && rm .temp_aux
 		cat .temp | sort > .temp_aux
 		cat .temp_aux > .temp
+		[ -e .temp_aux ] && rm .temp_aux
 	;;
 	-out )
 		command="${command} > "
@@ -191,6 +194,7 @@ case "$4" in
 		elif [ -n "$4" ]
 		then
 			echo "Error, try -groups"
+			[ -e .temp ] && rm .temp							# clean up
 			exit $ERROR
 		fi	
 	;;
@@ -226,6 +230,7 @@ case "$5" in
 		[ -e .temp_aux ] && rm .temp_aux
 		cat .temp | sort > .temp_aux
 		cat .temp_aux > .temp
+		[ -e .temp_aux ] && rm .temp_aux
 	;;
 	*)
 		if [ $out == $TRUE ]
@@ -236,6 +241,7 @@ case "$5" in
 		elif [ -n "$5" ]
 		then
 			echo "Error, try -dir"
+			[ -e .temp ] && rm .temp							# clean up
 			exit $ERROR
 		fi
 	;;
@@ -249,6 +255,7 @@ case "$6" in
 		[ -e .temp_aux ] && rm .temp_aux
 		cat .temp | sort > .temp_aux
 		cat .temp_aux > .temp
+		[ -e .temp_aux ] && rm .temp_aux
 	;;
 	 *)
 		if [ $out == $TRUE ]
@@ -259,6 +266,7 @@ case "$6" in
 		elif [ -n "$6" ]
 		then
 			echo "Error, try -out"
+			[ -e .temp ] && rm .temp							# clean up
 			exit $ERROR
 		fi
 	;;
@@ -268,16 +276,16 @@ case "$7" in
 		if [ $out == $TRUE ]
 		then
 			command="${command} $7"
-		elif [ -n "$7" ]									# -n -> Variavel is not NULL
+		elif [ -n "$7" ]									# -n -> If variavel is not NULL
 		then
 			echo "Error, filename not informed"
+			[ -e .temp ] && rm .temp							# clean up
 			exit $ERROR
 		fi
 	;;
 esac
 
-echo "COMMAND FINAL: $command"						# depuring code
-echo "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"	# depuring code
+echo "++++++++++++++++++++++COMMAND FINAL: $command++++++++++++++++++++++++"				# depuring code
 cat .temp
 [ -e .temp ] && rm .temp
 exit $SUCCESS
