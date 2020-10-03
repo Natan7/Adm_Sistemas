@@ -2,6 +2,10 @@
 
 SUCCESS=0        
 ERROR=1
+TRUE=1
+FALSE=0
+
+out=$FALSE
 
 LAST_LOGINS=$(last -s -$2days | head -n -2 | cut -d" " -f1) #retorna todos os logins desde $2 dias atrás até hoje
 
@@ -80,5 +84,32 @@ case "$1" in
 		exit $ERROR
 	;;
 esac
+case "$2" in
+	-out )
+		out=$TRUE;
+	;;
+	*)
+	if [ -n "$2" ]	# -n -> Variavel is not NULL
+		then
+			echo "Error, try -out \"filename\" "
+			exit $ERROR
+		fi
+        ;;
+esac
+case "$3" in
+	*)
+		if [ $out == $TRUE ]
+		then
+			#cat .temp > $3 		# $3 == "filename"
+			#[ -e .temp ] && rm .temp	# remove .temp file (if already exist)
+			exit $SUCCESS
+		elif [ -n "$3" ]	# -n -> Variavel is not NULL
+		then
+			echo "Error, inform filename"
+			exit $ERROR
+		fi
+        ;;
+esac
 
+#[ -e .temp ] && rm .temp	# remove .temp file (if already exist)
 exit $SUCCESS
