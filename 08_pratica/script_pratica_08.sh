@@ -74,11 +74,10 @@ case "$2" in
 		eval $command > .temp
 	;;
 	-out )
-		command="${command} > "
 		out=$TRUE;
 	;;
 	*)
-		if [ $user_argument == $TRUE ]
+		if [ $user_argument == $TRUE]
 		then
 			if [ -z $2 ]									# -z -> If no argument supplied
 			then
@@ -110,10 +109,6 @@ case "$2" in
 			command="${command} | awk '{\$4=\"${get_group_list}\"; print}'"
 
 			eval $command > .temp
-			cat .temp
-			[ -e .temp ] && rm .temp
-			exit $SUCCESS
-
 		elif [ -n "$2" ]
 		then
 			echo "Error, try -active or -nonactive"
@@ -130,14 +125,13 @@ case "$3" in
 		[ -e .temp_aux ] && rm .temp_aux
 	;;
 	-out )
-		command="${command} > "
 		out=$TRUE;
 	;;
 	*)
-		if [ $out == $TRUE ]
+		if [ $out == $TRUE -a -n "$3" ]
 		then
-			command="${command} $3"
-			eval $command
+			cat .temp > "$3"
+			[ -e .temp ] && rm .temp							# clean up
 			exit $SUCCESS
 		elif [ -n "$3" ]
 		then
@@ -169,14 +163,13 @@ case "$4" in
 		[ -e .temp_aux ] && rm .temp_aux
 	;;
 	-out )
-		command="${command} > "
 		out=$TRUE;
 	;;
 	*)
-		if [ $out == $TRUE ]
+		if [ $out == $TRUE -a -n "$4" ]
 		then
-			command="${command} $4"
-			eval $command
+			cat .temp > "$4"
+			[ -e .temp ] && rm .temp							# clean up
 			exit $SUCCESS
 		elif [ -n "$4" ]
 		then
@@ -197,17 +190,22 @@ case "$5" in
 		for user in $get_users
 		do
 			get_dir=$(getent passwd | grep "$user" | awk -F ":" '{print $6}')
-			get_dir_info=$(du -sh "$get_dir")
+			get_dir_info=$(du -sh "$get_dir" 2> .erros.log)
+
+			if [ -z "$get_dir_info" ]
+			then
+				get_dir_info="Directory_not_found"
+			fi 
 
 			number_column=$(cat .temp_aux | grep $user | awk '{ FS = ":" } ; { print NF}') 
-			number_column=$(($number_column + 1))
+			n=1
+			number_column=($number_column + $n)
 			command="cat .temp_aux | grep $user | awk '{\$$number_column=\"${get_dir_info}\"; print}'"
 			eval $command >> .temp
 		done
 		[ -e .temp_aux ] && rm .temp_aux
 	;;
 	-out )
-		command="${command} > "
 		out=$TRUE;
 	;;
 	-order )
@@ -217,10 +215,10 @@ case "$5" in
 		[ -e .temp_aux ] && rm .temp_aux
 	;;
 	*)
-		if [ $out == $TRUE ]
+		if [ $out == $TRUE -a -n "$5" ]
 		then
-			command="${command} $5"
-			eval $command
+			cat .temp > "$5"
+			[ -e .temp ] && rm .temp							# clean up
 			exit $SUCCESS
 		elif [ -n "$5" ]
 		then
@@ -232,7 +230,6 @@ case "$5" in
 esac
 case "$6" in
 	-out )
-		command="${command} > "
 		out=$TRUE;
 	;;
 	-order )
@@ -241,11 +238,11 @@ case "$6" in
 		cat .temp_aux > .temp
 		[ -e .temp_aux ] && rm .temp_aux
 	;;
-	 *)
-		if [ $out == $TRUE ]
+	*)
+		if [ $out == $TRUE -a -n "$6" ]
 		then
-			command="${command} $6"
-			eval $command
+			cat .temp > "$6"
+			[ -e .temp ] && rm .temp							# clean up
 			exit $SUCCESS
 		elif [ -n "$6" ]
 		then
@@ -257,10 +254,12 @@ case "$6" in
 esac
 case "$7" in
 	*)
-		if [ $out == $TRUE ]
+		if [ $out == $TRUE -a -n "$7" ]
 		then
-			command="${command} $7"
-		elif [ -n "$7" ]									# -n -> If variavel is not NULL
+			cat .temp > "$7"
+			[ -e .temp ] && rm .temp							# clean up
+			exit $SUCCESS
+		elif [ $out == $TRUE -a -z "$7" ]							# -n -> If variavel is not NULL
 		then
 			echo "Error, filename not informed"
 			[ -e .temp ] && rm .temp							# clean up
