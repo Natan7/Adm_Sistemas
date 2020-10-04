@@ -81,8 +81,9 @@ case "$1" in
 		done	
 	;;
 	*)
-		echo "ERROR, try -block [days] or -remove [days] options" >> .temp
-		exit $ERROR >> .temp
+		echo "ERROR, try -block [days] or -remove [days] options"
+		[ -e .temp ] && rm .temp	# remove .temp file (if already exist)
+		exit $ERROR
 	;;
 esac
 case "$3" in
@@ -90,24 +91,26 @@ case "$3" in
 		out=$TRUE;
 	;;
 	*)
-	if [ -n "$3" ]	# -n -> Variavel is not NULL
+		if [ -n "$3" ]	# -n -> If variavel is not NULL
 		then
-			echo "Error, try -out \"filename\" " >> .temp
-			exit $ERROR >> .temp
+			echo "Error, try -out \"filename\" "
+			[ -e .temp ] && rm .temp	# remove .temp file (if already exist)
+			exit $ERROR
 		fi
         ;;
 esac
 case "$4" in
 	*)
-		if [ $out == $TRUE ]
+		if [ $out == $TRUE -a -n "$4" ]
 		then
-			cat .temp > $4 		# $3 == "filename"
+			cat .temp > "$4" 		# $4 == "filename"
 			[ -e .temp ] && rm .temp	# remove .temp file (if already exist)
 			exit $SUCCESS			
-		elif [ -n "$4" ]	# -n -> Variavel is not NULL
+		elif [ $out == $TRUE -a -z "$4" ]	# -z -> If variavel is NULL
 		then
-			echo "Error, inform filename" >> .temp
-			exit $ERROR >> .temp
+			echo "Error, inform filename"
+			[ -e .temp ] && rm .temp	# remove .temp file (if already exist)
+			exit $ERROR
 		fi
         ;;
 esac
