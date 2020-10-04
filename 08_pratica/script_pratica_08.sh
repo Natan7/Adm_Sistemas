@@ -29,8 +29,10 @@ case "$1" in
 	;;
        	-human )
 		uid_max=$(cat /etc/login.defs | grep -E "^UID_MAX" | grep -o '[0-9]*')			# get UID_MAX
-		command="getent passwd {1000..$uid_max} | awk -F "":"" '{print\$1,\$3,\$5}'"
-		eval $command > .temp
+		#command="getent passwd {1000.."$uid_max"} | awk -F "":"" '{print\$1,\$3,\$5}'"		# too slow get
+		#command="awk -F':' -v "min=1000" -v "max=\$uid_max" '{ if ( \$3 >= min && \$3 <= max ) print\$0}' /etc/passwd | awk -F':' '{ print\$1,\$3,\$5}'"
+		#eval $command > .temp
+		awk -F':' -v "min=1000" -v "max=$uid_max" '{ if ( $3 >= min && $3 <= max ) print $0}' /etc/passwd | awk -F':' '{ print $1,$3,$5}' > .temp
        	;;
 	-user )
 		user_argument=$TRUE
@@ -45,39 +47,49 @@ case "$2" in
 		users_names=$(passwd -S -a|awk '$2 ~ /P/ {print $1}')
 		if [ -n "$users_names" ]								# -n -> If variavel is not NULL
 		then
+			[ -e .temp_aux ] && rm .temp_aux
+			cat .temp > .temp_aux
 			[ -e .temp ] && rm .temp							# clean up
+
 			for user in $users_names
 			do
-				eval $command | grep ${user} >> .temp
+				cat .temp_aux | grep ${user} >> .temp
 			done
 		else
 			echo "Not have active users in this time."
 			exit $SUCCESS				
 		fi
+		[ -e .temp_aux ] && rm .temp_aux							# clean up
 	;;
 	-nonactive )
 		users_names=$(passwd -S -a|awk '$2 ~ /L/ {print $1}')
 		if [ -n "$users_names" ]								# -n -> If variavel is not NULL
 		then
+			[ -e .temp_aux ] && rm .temp_aux
+			cat .temp > .temp_aux
 			[ -e .temp ] && rm .temp							# clean up
+			
 			for user in $users_names
 			do
-				eval $command | grep ${user} >> .temp
+				cat .temp_aux | grep ${user} >> .temp
 			done
 		else
 			echo "Not have nonactive users in this time."
 			exit $SUCCESS				
 		fi
+		[ -e .temp_aux ] && rm .temp_aux							# clean up
 	;;
 	-order )
-		command="${command} | sort"
-		eval $command > .temp
+		[ -e .temp_aux ] && rm .temp_aux
+		cat .temp | sort > .temp_aux
+		cat .temp_aux > .temp
+		[ -e .temp_aux ] && rm .temp_aux
 	;;
 	-out )
 		out=$TRUE;
 	;;
 	*)
-		if [ $user_argument == $TRUE]
+		if [ $user_argument == $TRUE ]
 		then
 			if [ -z $2 ]									# -z -> If no argument supplied
 			then
