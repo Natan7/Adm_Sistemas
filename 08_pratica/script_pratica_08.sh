@@ -42,7 +42,6 @@ case "$1" in
 esac
 case "$2" in
 	-active )
-		#users_names=$(w | passwd -S | grep P | awk '{print $1}')
 		users_names=$(passwd -S -a|awk '$2 ~ /P/ {print $1}')
 		if [ -n "$users_names" ]								# -n -> If variavel is not NULL
 		then
@@ -51,14 +50,12 @@ case "$2" in
 			do
 				eval $command | grep ${user} >> .temp
 			done
-			#command="${command} | grep -i ${users_names}"
 		else
 			echo "Not have active users in this time."
 			exit $SUCCESS				
 		fi
 	;;
 	-nonactive )
-		#users_names=$(w | passwd -S | grep LK | awk '{print $1}')
 		users_names=$(passwd -S -a|awk '$2 ~ /L/ {print $1}')
 		if [ -n "$users_names" ]								# -n -> If variavel is not NULL
 		then
@@ -67,7 +64,6 @@ case "$2" in
 			do
 				eval $command | grep ${user} >> .temp
 			done
-			#command="${command} | grep -i ${users_names}"
 		else
 			echo "Not have nonactive users in this time."
 			exit $SUCCESS				
@@ -91,6 +87,7 @@ case "$2" in
 			fi
 	
 			user=$2
+			uid_user=$(getent passwd | grep "$user:" | awk -F "":"" '{print$3}')
 			find_user=$(getent passwd | awk -F "":"" '{print$1}' | grep -x $user)
 			if [ -z "$find_user" ]								# -z -> If variavel is NULL
 			then
@@ -98,7 +95,7 @@ case "$2" in
 				exit $SUCCESS
 			fi
 
-			command="getent passwd | awk -F "":"" '{print\$1,\$3}' | grep \"\$user \""
+			command="getent passwd | awk -F "":"" '{print\$1,\$3}' | grep \"\$uid_user\""
 			is_active=$(passwd -S -a|awk '$2 ~ /P/ {print $1}' | grep -x $user)	
 			is_nonactive=$(passwd -S -a|awk '$2 ~ /L/ {print $1}' | grep -x $user)	
 			if [ -n "$is_active" ]								# -n -> If variavel is not NULL
@@ -108,14 +105,6 @@ case "$2" in
 			then
 				command="${command} | awk '{\$3=\"Nonactive_User\"; print}'"				
 			fi
-			#command="getent passwd | awk -F "":"" '{print\$1,\$3}' | grep \$user" #### check 
-			#is_active=$(w | passwd -S | grep P | awk '{print $1}' | grep -x $user) #######
-#			if [ -n "$is_active" ]		# -n -> Variavel is not NULL
-#			then
-#				command="${command} | awk '{\$3=\"Active_User\"; print}'"
-#			else
-#				command="${command} | awk '{\$3=\"Nonactive_User\"; print}'"				
-#			fi
 
 			get_group_list=$(groups $user | awk -F ": " '{print $2}')
 			command="${command} | awk '{\$4=\"${get_group_list}\"; print}'"
@@ -164,12 +153,10 @@ case "$4" in
 		cat .temp > .temp_aux
 		[ -e .temp ] && rm .temp								# clean up
 
-		#get_users="${command} | awk '{print\$1}'"
 		get_users=$(cat .temp_aux | awk '{print$1}')
 		for user in $get_users
 		do
 			get_groups_list=$(groups $user | awk -F ": " '{print $2}')
-			#command="${command} | awk '{\$4=\"${get_groups_list}\"; print}'"
 			command="cat .temp_aux | grep $user | awk '{\$4=\"${get_groups_list}\"; print}'"
 			eval $command >> .temp
 		done
@@ -205,9 +192,7 @@ case "$5" in
 		cat .temp > .temp_aux
 		[ -e .temp ] && rm .temp								# clean up
 
-		#get_users="${command} | awk '{print\$1}'"
 		get_users=$(cat .temp_aux | awk '{print$1}')
-		#users_names=$(eval $get_users)
 		number_column=5
 		for user in $get_users
 		do
@@ -216,7 +201,6 @@ case "$5" in
 
 			number_column=$(cat .temp_aux | grep $user | awk '{ FS = ":" } ; { print NF}') 
 			number_column=$(($number_column + 1))
-			#command="${command} | awk '{\$$number_column=\"${get_dir_info}\"; print}'"
 			command="cat .temp_aux | grep $user | awk '{\$$number_column=\"${get_dir_info}\"; print}'"
 			eval $command >> .temp
 		done
@@ -285,7 +269,6 @@ case "$7" in
 	;;
 esac
 
-echo "++++++++++++++++++++++COMMAND FINAL: $command++++++++++++++++++++++++"				# depuring code
 cat .temp
 [ -e .temp ] && rm .temp
 exit $SUCCESS
