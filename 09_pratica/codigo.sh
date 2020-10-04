@@ -7,7 +7,7 @@ FALSE=0
 
 out=$FALSE
 
-LAST_LOGINS=$(last -s -$2days | head -n -2 | cut -d" " -f1) #retorna todos os logins desde $2 dias atrás até hoje
+LAST_LOGINS=$(last -s -$2days | head -n -2 | cut -d" " -f1) > .temp #retorna todos os logins desde $2 dias atrás até hoje
 
 if [ ! -n "$LAST_LOGINS" ]
 then
@@ -36,16 +36,17 @@ case "$1" in
 			
 			if [ $COUNTER == 0 ]
 			then
-				echo "BLOCKING USER ${user}" 
-				sudo passwd --lock ${user}
+				echo "BLOCKING USER ${user}" >> .temp 
+				sudo passwd --lock ${user} >> .temp
 			fi
 		done
 	;;
 	-remove )
 		
 		if [ ! -e /backup_usuarios ]
-		then
-			sudo mkdir /backup_usuarios
+		then	
+			echo "Creating backups directory:" >> .temp
+			sudo mkdir /backup_usuarios >> .temp
 		fi
 		
 		DATE=$(date -d '' +'%b%d%Y')
@@ -64,52 +65,52 @@ case "$1" in
 			
 			if [ $COUNTER == 0 ]
 			then
-				echo "BACKING UP FILES FROM /home/${user}" 
-				sudo tar -czvf /backup_usuarios/${user}_$DATE.tar.gz /home/${user}/*
-				echo "DONE!"
-				echo "====="
-				echo "Deleting home folder"
-				sudo rm -Rf /home/${user}
-				echo "DONE!"
-				echo "====="
-				echo "Deleting user ${user}"
-				sudo userdel ${user}
-				echo "DONE!"
-				echo "====="
+				echo "BACKING UP FILES FROM /home/${user} to /backup_usuarios/${user}_$DATE.tar.gz" >> .temp
+				sudo tar -czvf /backup_usuarios/${user}_$DATE.tar.gz -C / home/${user} >> .temp
+				echo "DONE!" >> .temp
+				echo "=====" >> .temp
+				echo "Deleting home folder" >> .temp
+				sudo rm -Rf /home/${user} >> .temp
+				echo "DONE!" >> .temp
+				echo "=====" >> .temp
+				echo "Deleting user ${user}" >> .temp
+				sudo userdel ${user} >> .temp
+				echo "DONE!" >> .temp
+				echo "=====" >> .temp
 			fi
 		done	
 	;;
 	*)
-		echo "ERROR, try -block [days] or -remove [days] options"
-		exit $ERROR
+		echo "ERROR, try -block [days] or -remove [days] options" >> .temp
+		exit $ERROR >> .temp
 	;;
 esac
-case "$2" in
+case "$3" in
 	-out )
 		out=$TRUE;
 	;;
 	*)
-	if [ -n "$2" ]	# -n -> Variavel is not NULL
+	if [ -n "$3" ]	# -n -> Variavel is not NULL
 		then
-			echo "Error, try -out \"filename\" "
-			exit $ERROR
+			echo "Error, try -out \"filename\" " >> .temp
+			exit $ERROR >> .temp
 		fi
         ;;
 esac
-case "$3" in
+case "$4" in
 	*)
 		if [ $out == $TRUE ]
 		then
-			#cat .temp > $3 		# $3 == "filename"
-			#[ -e .temp ] && rm .temp	# remove .temp file (if already exist)
-			exit $SUCCESS
+			cat .temp > $4 		# $3 == "filename"
+			[ -e .temp ] && rm .temp	# remove .temp file (if already exist)
+			exit $SUCCESS			
 		elif [ -n "$3" ]	# -n -> Variavel is not NULL
 		then
-			echo "Error, inform filename"
-			exit $ERROR
+			echo "Error, inform filename" >> .temp
+			exit $ERROR >> .temp
 		fi
         ;;
 esac
 
-#[ -e .temp ] && rm .temp	# remove .temp file (if already exist)
+[ -e .temp ] && rm .temp	# remove .temp file (if already exist)
 exit $SUCCESS
