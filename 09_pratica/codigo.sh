@@ -104,7 +104,7 @@ case "$4" in
 			cat .temp > $4 		# $3 == "filename"
 			[ -e .temp ] && rm .temp	# remove .temp file (if already exist)
 			exit $SUCCESS			
-		elif [ -n "$3" ]	# -n -> Variavel is not NULL
+		elif [ -n "$4" ]	# -n -> Variavel is not NULL
 		then
 			echo "Error, inform filename" >> .temp
 			exit $ERROR >> .temp
